@@ -59,7 +59,7 @@ import { TrackingChecklistProvider } from './components/tracking-checklist/Track
 import { HomeScreenSettings } from './components/settings/pages/HomeScreenSettings';
 import { ChecklistPage } from './components/tracking-checklist/TrackingChecklist';
 
-export const GH_REPO = 'SlimeVR/SlimeVR-Server';
+export const GH_REPO = 'poprox24/SlimeVR-Server';
 export const VersionContext = createContext('');
 export const DOCS_SITE = 'https://docs.slimevr.dev';
 export const SLIMEVR_DISCORD = 'https://discord.gg/slimevr';

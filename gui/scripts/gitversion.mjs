@@ -14,6 +14,6 @@ const [commitHash, versionTag, gitClean] = await Promise.all([
 
 console.log(
   JSON.stringify({
-    version: `${versionTag || `0.0.0-${commitHash}`}${gitClean ? '' : '-dirty'}`,
+    version: `${versionTag || `0.0.0-${commitHash}`}`,
   })
 );
