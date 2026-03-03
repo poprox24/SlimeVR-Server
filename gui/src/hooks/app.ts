@@ -1,12 +1,20 @@
-import { createContext, useContext, useEffect, useLayoutEffect, useState } from 'react';
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useLayoutEffect,
+  useState,
+  useRef,
+} from 'react';
 import {
   DataFeedMessage,
   DataFeedUpdateT,
   ResetResponseT,
   RpcMessage,
   StartDataFeedT,
+  TrackerStatus,
 } from 'solarxr-protocol';
-import { handleResetSounds } from '@/sounds/sounds';
+import { handleResetSounds, trackerErrorSound, restartAndPlay } from '@/sounds/sounds';
 import { useConfig } from './config';
 import { useBonesDataFeedConfig, useDataFeedConfig } from './datafeed-config';
 import { useWebsocketAPI } from './websocket-api';
@@ -30,6 +38,7 @@ export function useProvideAppContext(): AppContext {
   const setDatafeed = useSetAtom(datafeedAtom);
   const setBones = useSetAtom(bonesAtom);
   const devices = useAtomValue(devicesAtom);
+  const prevTrackerStatusesRef = useRef<Map<string, number>>(new Map());
 
   const [currentFirmwareRelease, setCurrentFirmwareRelease] =
     useState<FirmwareRelease | null>(null);
@@ -52,6 +61,18 @@ export function useProvideAppContext(): AppContext {
 
   useEffect(() => {
     updateSentryContext(devices);
+    if (!config?.feedbackSound) return;
+    for (const device of devices) {
+      for (const tracker of device.trackers) {
+        const key = `${device.id?.id}-${tracker.trackerId?.trackerNum}`;
+        const prev = prevTrackerStatusesRef.current.get(key) ?? -1;
+        const curr = tracker.status ?? -1;
+        if (curr === TrackerStatus.ERROR && prev !== TrackerStatus.ERROR) {
+          restartAndPlay(trackerErrorSound, config.feedbackSoundVolume ?? 1);
+        }
+        prevTrackerStatusesRef.current.set(key, curr);
+      }
+    }
   }, [devices]);
 
   useRPCPacket(RpcMessage.ResetResponse, (resetResponse: ResetResponseT) => {

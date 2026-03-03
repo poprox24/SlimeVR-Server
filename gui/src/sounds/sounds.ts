@@ -53,6 +53,7 @@ const resetSounds: Record<
 
 export const trackingPauseSound = createAudio('/sounds/tracking/pause.ogg');
 export const trackingPlaySound = createAudio('/sounds/tracking/play.ogg');
+export const trackerErrorSound = createAudio('/sounds/tracking/error.ogg');
 
 let lastTap = 0;
 export async function playTapSetupSound(volume = 1) {
